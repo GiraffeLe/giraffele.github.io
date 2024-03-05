@@ -1,0 +1,255 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>利用Zerotier实现异地组网 | Hello Hexo!</title><meta name="author" content="GiraffeLe"><meta name="copyright" content="GiraffeLe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="仅测试用,图一乐介绍:简单来说就是Zerotier可以使不同网络上的设备互相通信. 官网的介绍:  ZeroTier lets you build modern, secure multi-point virtualized networks of almost any type. From robust peer-to-peer networking to multi-cloud mesh i">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用Zerotier实现异地组网">
+<meta property="og:url" content="https://giraffele.github.io/post/%E5%88%A9%E7%94%A8Zerotier%E5%AE%9E%E7%8E%B0%E5%BC%82%E5%9C%B0%E7%BB%84%E7%BD%91/index.html">
+<meta property="og:site_name" content="Hello Hexo!">
+<meta property="og:description" content="仅测试用,图一乐介绍:简单来说就是Zerotier可以使不同网络上的设备互相通信. 官网的介绍:  ZeroTier lets you build modern, secure multi-point virtualized networks of almost any type. From robust peer-to-peer networking to multi-cloud mesh i">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/a919c3c9f164eeeca9c1422cbda2a195.png">
+<meta property="article:published_time" content="2024-01-29T05:43:59.000Z">
+<meta property="article:modified_time" content="2024-03-05T09:18:30.455Z">
+<meta property="article:author" content="GiraffeLe">
+<meta property="article:tag" content="Java,编程,学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/a919c3c9f164eeeca9c1422cbda2a195.png"><link rel="shortcut icon" href="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/10a8afca29af6914c5e0cbd9492aecdb.png"><link rel="canonical" href="https://giraffele.github.io/post/%E5%88%A9%E7%94%A8Zerotier%E5%AE%9E%E7%8E%B0%E5%BC%82%E5%9C%B0%E7%BB%84%E7%BD%91/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: {"limitDay":365,"position":"top","messagePrev":"距离上次更新已过","messageNext":"天,文章内容可能已失效,请注意!"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '利用Zerotier实现异地组网',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-03-05 17:18:30'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/imagesSnipaste_2023-11-24_15-51-56.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa-solid fa-house"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url('https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/a919c3c9f164eeeca9c1422cbda2a195.png')"><nav id="nav"><span id="blog-info"><a href="/" title="Hello Hexo!"></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa-solid fa-house"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">利用Zerotier实现异地组网</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-01-29T05:43:59.000Z" title="发表于 2024-01-29 13:43:59">2024-01-29</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-03-05T09:18:30.455Z" title="更新于 2024-03-05 17:18:30">2024-03-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%95%99%E7%A8%8B/">教程</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">995</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>3分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="利用Zerotier实现异地组网"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p><img src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/95f93b7200fda928a32cdd933f64c442.png"></p>
+<h1 id="仅测试用-图一乐"><a href="#仅测试用-图一乐" class="headerlink" title="仅测试用,图一乐"></a>仅测试用,图一乐</h1><h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍:"></a>介绍:</h1><p>简单来说就是Zerotier可以使不同网络上的设备互相通信.</p>
+<p><strong>官网的介绍:</strong></p>
+<blockquote>
+<p>ZeroTier lets you build modern, secure multi-point virtualized networks of almost any type. From robust peer-to-peer networking to multi-cloud mesh infrastructure, we enable global connectivity with the simplicity of a local network.</p>
+</blockquote>
+<blockquote>
+<p>ZeroTier允许您构建几乎任何类型的现代、安全的多点虚拟化网络。从强大的点对点网络到多云网格基础设施，我们通过本地网络的简单性实现全球连接。</p>
+</blockquote>
+<p><strong>ChatGpt的介绍</strong></p>
+<blockquote>
+<p>ZeroTier 是一种软件定义的广域网（SD-WAN）解决方案，旨在简化和改进设备之间的远程连接和网络配置。ZeroTier 提供了一种简单而强大的方式，使用户能够在不同设备之间创建安全的虚拟网络。以下是一些关键特点和概念：</p>
+<ol>
+<li><strong>虚拟网络：</strong> ZeroTier 允许用户在全球范围内创建虚拟网络，使得设备彼此之间可以直接通信，就好像它们在同一局域网中一样。</li>
+<li><strong>全球性连接：</strong> ZeroTier 通过使用点对点连接技术，允许设备通过互联网直接进行连接，无论它们位于世界的哪个地方。这种全球性的连接使得远程办公、跨地域团队协作等变得更加方便。</li>
+<li><strong>零信任模型：</strong> ZeroTier 采用零信任（Zero Trust）的网络安全模型，所有设备在连接时都需要经过验证，并且通信经过加密，确保数据的安全性。</li>
+<li><strong>简单配置：</strong> ZeroTier 的配置相对简单，用户只需安装 ZeroTier 软件并加入一个网络，就可以建立起安全的连接。网络管理员可以通过 ZeroTier Central 控制面板来管理网络和设备。</li>
+<li><strong>开源：</strong> ZeroTier 是开源的，这意味着用户可以查看和审查其代码。这有助于建立信任，同时也使得社区能够共同改进和扩展这一技术。</li>
+<li><strong>跨平台支持：</strong> ZeroTier 提供了广泛的平台支持，包括 Windows、macOS、Linux、iOS、Android 等。这使得用户可以在各种设备上无缝使用 ZeroTier。</li>
+</ol>
+<p>总体来说，ZeroTier 提供了一种简便而强大的方法，使用户能够在全球范围内建立安全的虚拟网络，从而改善远程工作、设备互联等应用场景。</p>
+</blockquote>
+<p>下面是Zerotier的官网:</p>
+<p><a target="_blank" rel="noopener" href="https://www.zerotier.com/">Zerotier官网</a></p>
+<p>Zerotier的github链接:</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/zerotier/ZeroTierOne">Github</a></p>
+<h1 id="用途"><a href="#用途" class="headerlink" title="用途:"></a>用途:</h1><p>zerotier构建了一个虚拟的局域网,那么在这个网络上的设备都可以互相访问,不论物理上的距离有多远.<br>个人感觉用途上就是低配版的公网IP吧.</p>
+<p>在这里分享一下本人用Zerotier来实现的功能:</p>
+<ol>
+<li>架设游戏服务器</li>
+<li>好友联机(和第一条差不多)</li>
+<li>私人影院</li>
+</ol>
+<h2 id="架设游戏服务器"><a href="#架设游戏服务器" class="headerlink" title="架设游戏服务器"></a>架设游戏服务器</h2><p>如果是用来架设游戏服务器的话,可以找一台空闲的电脑.</p>
+<p>具体怎么架设的话去看对应游戏的相关开服方法.</p>
+<p>用Zerotier来架设游戏服务器总比用云服务器开服强.</p>
+<p>阿里腾讯的服务器贵的一批.</p>
+<p>最低档的服务器(99一年),2核2G,带宽还是3M的能干啥?</p>
+<p>之前用过来开MC服,才4个人都时不时会卡.而且还是玩的原版.要是MOD服我都不敢想(</p>
+<p>感觉不如用自己电脑架设服务器.</p>
+<h2 id="好友联机-以泰拉瑞亚为例"><a href="#好友联机-以泰拉瑞亚为例" class="headerlink" title="好友联机:(以泰拉瑞亚为例)"></a>好友联机:(以泰拉瑞亚为例)</h2><p>好友开服,然后去<a target="_blank" rel="noopener" href="https://my.zerotier.com/">Zerotier后台管理</a></p>
+<p>看一下好友的ip,然后自己直接点击通过ip加入,输入好友的ip就行</p>
+<img src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/7716fe442a686ad906825ac3f16d691b.png" style="zoom: 50%;">
+
+<img src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/e438115ec0acc3f07d0f37ed115e04fc.png" style="zoom:50%;">
+
+
+
+<h2 id="私人影院"><a href="#私人影院" class="headerlink" title="私人影院:"></a>私人影院:</h2><p>私人影院的话是通过Emby来实现的.</p>
+<p><a target="_blank" rel="noopener" href="https://emby.media/">官网</a></p>
+<p>作为服务器的电脑下一个emby server 后面进行配置一下就行了.</p>
+<p>同一个网络内的其他设备输入服务器的ip就可以直接访问了.</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://giraffele.github.io">GiraffeLe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://giraffele.github.io/post/%E5%88%A9%E7%94%A8Zerotier%E5%AE%9E%E7%8E%B0%E5%BC%82%E5%9C%B0%E7%BB%84%E7%BD%91/">https://giraffele.github.io/post/利用Zerotier实现异地组网/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://giraffele.github.io" target="_blank">Hello Hexo!</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/a919c3c9f164eeeca9c1422cbda2a195.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/%E6%B2%B3%E5%8D%97%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6GiWifi%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90%E5%8F%8A%E6%A8%A1%E6%8B%9F%E7%99%BB%E5%BD%95/" title="河南理工大学GiWifi认证过程分析及模拟登录"><img class="cover" src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/1836e3efa74eeed7045079354d6fd908.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">河南理工大学GiWifi认证过程分析及模拟登录</div></div></a></div><div class="next-post pull-right"><a href="/post/2023FinalAnime/" title="2023AnimeRank"><img class="cover" src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/e0975e387d99d3a6b5a4c64f40deaed4.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">2023AnimeRank</div></div></a></div></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/imagesSnipaste_2023-11-24_15-51-56.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">GiraffeLe</div><div class="author-info__description">入门程序员</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/GiraffeLe" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="https://space.bilibili.com/37426008" target="_blank" title="Bilibili"><i class="fa-brands fa-bilibili" style="color: #ca49b9;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">慢慢调试.</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%85%E6%B5%8B%E8%AF%95%E7%94%A8-%E5%9B%BE%E4%B8%80%E4%B9%90"><span class="toc-number">1.</span> <span class="toc-text">仅测试用,图一乐</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D"><span class="toc-number">2.</span> <span class="toc-text">介绍:</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%94%A8%E9%80%94"><span class="toc-number">3.</span> <span class="toc-text">用途:</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%B6%E8%AE%BE%E6%B8%B8%E6%88%8F%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">3.1.</span> <span class="toc-text">架设游戏服务器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A5%BD%E5%8F%8B%E8%81%94%E6%9C%BA-%E4%BB%A5%E6%B3%B0%E6%8B%89%E7%91%9E%E4%BA%9A%E4%B8%BA%E4%BE%8B"><span class="toc-number">3.2.</span> <span class="toc-text">好友联机:(以泰拉瑞亚为例)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A7%81%E4%BA%BA%E5%BD%B1%E9%99%A2"><span class="toc-number">3.3.</span> <span class="toc-text">私人影院:</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/post/%E6%B2%B3%E5%8D%97%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6GiWifi%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90%E5%8F%8A%E6%A8%A1%E6%8B%9F%E7%99%BB%E5%BD%95/" title="河南理工大学GiWifi认证过程分析及模拟登录"><img src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/1836e3efa74eeed7045079354d6fd908.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="河南理工大学GiWifi认证过程分析及模拟登录"/></a><div class="content"><a class="title" href="/post/%E6%B2%B3%E5%8D%97%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6GiWifi%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90%E5%8F%8A%E6%A8%A1%E6%8B%9F%E7%99%BB%E5%BD%95/" title="河南理工大学GiWifi认证过程分析及模拟登录">河南理工大学GiWifi认证过程分析及模拟登录</a><time datetime="2024-03-05T08:34:30.000Z" title="发表于 2024-03-05 16:34:30">2024-03-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/%E5%88%A9%E7%94%A8Zerotier%E5%AE%9E%E7%8E%B0%E5%BC%82%E5%9C%B0%E7%BB%84%E7%BD%91/" title="利用Zerotier实现异地组网"><img src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/a919c3c9f164eeeca9c1422cbda2a195.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="利用Zerotier实现异地组网"/></a><div class="content"><a class="title" href="/post/%E5%88%A9%E7%94%A8Zerotier%E5%AE%9E%E7%8E%B0%E5%BC%82%E5%9C%B0%E7%BB%84%E7%BD%91/" title="利用Zerotier实现异地组网">利用Zerotier实现异地组网</a><time datetime="2024-01-29T05:43:59.000Z" title="发表于 2024-01-29 13:43:59">2024-01-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/2023FinalAnime/" title="2023AnimeRank"><img src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/e0975e387d99d3a6b5a4c64f40deaed4.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="2023AnimeRank"/></a><div class="content"><a class="title" href="/post/2023FinalAnime/" title="2023AnimeRank">2023AnimeRank</a><time datetime="2024-01-03T14:03:40.000Z" title="发表于 2024-01-03 22:03:40">2024-01-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/%E5%B8%B8%E7%94%A8Markdown%E7%9A%84%E8%AF%AD%E6%B3%95/" title="常用Markdown的语法"><img src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/a919c3c9f164eeeca9c1422cbda2a195.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="常用Markdown的语法"/></a><div class="content"><a class="title" href="/post/%E5%B8%B8%E7%94%A8Markdown%E7%9A%84%E8%AF%AD%E6%B3%95/" title="常用Markdown的语法">常用Markdown的语法</a><time datetime="2023-11-25T14:42:45.000Z" title="发表于 2023-11-25 22:42:45">2023-11-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/hello/" title="Hello Hexo"><img src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/e0975e387d99d3a6b5a4c64f40deaed4.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hello Hexo"/></a><div class="content"><a class="title" href="/post/hello/" title="Hello Hexo">Hello Hexo</a><time datetime="2023-11-24T03:56:10.000Z" title="发表于 2023-11-24 11:56:10">2023-11-24</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2024 By GiraffeLe</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi!Welcome to my blog</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(()=>{
+  const getGiscusTheme = theme => {
+    return theme === 'dark' ? 'dark' : 'light'
+  }
+
+  const loadGiscus = () => {
+    const config = Object.assign({
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'GiraffeLe/giraffele.github.io',
+      'data-repo-id': 'R_kgDOJrKjZg',
+      'data-category-id': 'DIC_kwDOJrKjZs4CbO0_',
+      'data-mapping': 'pathname',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true
+    },null)
+
+    const ele = document.createElement('script')
+    for (let key in config) {
+      ele.setAttribute(key, config[key])
+    }
+    document.getElementById('giscus-wrap').appendChild(ele)
+  }
+
+  const changeGiscusTheme = theme => {
+    const sendMessage = message => {
+      const iframe = document.querySelector('iframe.giscus-frame')
+      if (!iframe) return
+      iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app')
+    }
+
+    sendMessage({
+      setConfig: {
+        theme: getGiscusTheme(theme)
+      }
+    });
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment= loadGiscus
+  }
+})()</script></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
