@@ -1,0 +1,233 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Templater日记模板天气数据源 | Giraffele'Site</title><meta name="author" content="GiraffeLe"><meta name="copyright" content="GiraffeLe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="起因用templater写了个日记模板,之前是记录创建文件时的温度,随着使用发现需要回顾本日的气温变化,如果选择手动去网站查今日天气数据的话:重复性操作太多且数据有一定偏差(个人以获取的实时天气为准)然后就打算写了个脚本一劳永逸. 过程由于需要一天内定时发送请求获取天气信息,这个在电脑上实现不太可能,随后便想到了宿舍里的路由器. 其实实现的大致思路并不难 路由器收集一天的天气信息 -&gt; 电脑">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Templater日记模板天气数据源">
+<meta property="og:url" content="https://giraffele.github.io/post/Templater%E6%97%A5%E8%AE%B0%E6%A8%A1%E6%9D%BF%E5%A4%A9%E6%B0%94%E6%95%B0%E6%8D%AE%E6%BA%90/index.html">
+<meta property="og:site_name" content="Giraffele&#39;Site">
+<meta property="og:description" content="起因用templater写了个日记模板,之前是记录创建文件时的温度,随着使用发现需要回顾本日的气温变化,如果选择手动去网站查今日天气数据的话:重复性操作太多且数据有一定偏差(个人以获取的实时天气为准)然后就打算写了个脚本一劳永逸. 过程由于需要一天内定时发送请求获取天气信息,这个在电脑上实现不太可能,随后便想到了宿舍里的路由器. 其实实现的大致思路并不难 路由器收集一天的天气信息 -&gt; 电脑">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/4b532e7f47e307a678b28406019a24d7.png">
+<meta property="article:published_time" content="2024-05-08T15:27:53.000Z">
+<meta property="article:modified_time" content="2024-05-09T06:33:12.793Z">
+<meta property="article:author" content="GiraffeLe">
+<meta property="article:tag" content="脚本">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/4b532e7f47e307a678b28406019a24d7.png"><link rel="shortcut icon" href="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/10a8afca29af6914c5e0cbd9492aecdb.png"><link rel="canonical" href="https://giraffele.github.io/post/Templater%E6%97%A5%E8%AE%B0%E6%A8%A1%E6%9D%BF%E5%A4%A9%E6%B0%94%E6%95%B0%E6%8D%AE%E6%BA%90/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: {"limitDay":365,"position":"top","messagePrev":"距离上次更新已过","messageNext":"天,文章内容可能已失效,请注意!"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Templater日记模板天气数据源',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-05-09 14:33:12'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/imagesSnipaste_2023-11-24_15-51-56.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa-solid fa-house"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url('https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/4b532e7f47e307a678b28406019a24d7.png')"><nav id="nav"><span id="blog-info"><a href="/" title="Giraffele'Site"></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa-solid fa-house"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Templater日记模板天气数据源</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-05-08T15:27:53.000Z" title="发表于 2024-05-08 23:27:53">2024-05-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-05-09T06:33:12.793Z" title="更新于 2024-05-09 14:33:12">2024-05-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Templater日记模板天气数据源"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>用templater写了个日记模板,之前是记录创建文件时的温度,<br>随着使用发现需要<strong>回顾本日的气温变化</strong>,<br>如果选择手动去网站查今日天气数据的话:<strong>重复性操作太多</strong>且<strong>数据有一定偏差</strong>(个人以获取的实时天气为准)<br>然后就打算写了个脚本一劳永逸.</p>
+<h1 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h1><p>由于需要一天内<strong>定时发送请求</strong>获取天气信息,这个在电脑上实现不太可能,<br>随后便想到了宿舍里的路由器.</p>
+<p>其实实现的大致思路并不难</p>
+<p><strong>路由器收集一天的天气信息</strong> -&gt; <strong>电脑获取路由器收集到的数据</strong> -&gt; <strong>脚本解析</strong> -&gt; <strong>用obsidian的chart插件完成数据展示</strong></p>
+<h2 id="路由器收集信息"><a href="#路由器收集信息" class="headerlink" title="路由器收集信息"></a>路由器收集信息</h2><p>之前用node写过获取天气的脚本,思路还是比较简单的.<br>宿舍的路由器是<code>红米AC2100</code> 性能比较菜,于是打算写一个<strong>shell脚本</strong>来实现功能<br>还需要安装一下<code>jq</code>来解析一下json</p>
+<p>下面是写好的脚本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">. /root/weather/config.txt</span><br><span class="line"></span><br><span class="line"><span class="comment">#如果没填城市编码,则根据ip获取城市编码</span></span><br><span class="line"><span class="keyword">if</span> [ -z <span class="string">&quot;<span class="variable">$city</span>&quot;</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">    url=<span class="string">&quot;https://restapi.amap.com/v3/ip?key=<span class="variable">$&#123;key&#125;</span>&quot;</span></span><br><span class="line">    city=$(curl <span class="variable">$url</span> | jq <span class="string">&quot;.adcode&quot;</span>)</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;city=\&quot;<span class="variable">$city</span>\&quot;&quot;</span> &gt;&gt; config.txt</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">url=<span class="string">&quot;https://restapi.amap.com/v3/weather/weatherInfo?key=<span class="variable">$&#123;key&#125;</span>&amp;city=<span class="variable">$&#123;city&#125;</span>&amp;extension=<span class="variable">$&#123;extensions&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">year=$(<span class="built_in">date</span> +<span class="string">&quot;%Y&quot;</span>)</span><br><span class="line">month=$(<span class="built_in">date</span> +<span class="string">&quot;%m&quot;</span>)</span><br><span class="line">time=$(<span class="built_in">date</span> +<span class="string">&quot;%Y-%m-%d&quot;</span>)</span><br><span class="line">filename=<span class="string">&quot;<span class="variable">$&#123;time&#125;</span>.txt&quot;</span></span><br><span class="line">path=<span class="string">&quot;/www/result/<span class="variable">$&#123;year&#125;</span>/<span class="variable">$&#123;month&#125;</span>&quot;</span></span><br><span class="line">reportTime=$(<span class="built_in">date</span> +<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#Q:执行之后对应的txt文件没有生成/内容追加</span></span><br><span class="line"><span class="comment">#A:排查发现是路径问题,已修改 path 为绝对路径</span></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$&#123;path&#125;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;脚本执行时间: <span class="variable">$&#123;reportTime&#125;</span></span></span><br><span class="line"><span class="string">下方为内容结果:&quot;</span> &gt;&gt; <span class="string">&quot;<span class="variable">$&#123;path&#125;</span>/<span class="variable">$&#123;filename&#125;</span>&quot;</span></span><br><span class="line">curl <span class="variable">$&#123;url&#125;</span> | jq <span class="string">&#x27;.lives[0]&#x27;</span> &gt;&gt; <span class="string">&quot;<span class="variable">$&#123;path&#125;</span>/<span class="variable">$&#123;filename&#125;</span>&quot;</span></span><br><span class="line"><span class="comment"># &gt;&gt;是追加内容，&gt;是覆盖内容</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;&quot;</span> &gt;&gt; <span class="string">&quot;<span class="variable">$&#123;path&#125;</span>/<span class="variable">$&#123;filename&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">. /root/weather/config.txt</span><br></pre></td></tr></table></figure>
+<p>读取配置文件(openwrt里不支持<code>source</code>,所以改成了 <code>.</code>来达到相同效果)</p>
+<p>配置文件里的内容长这样:</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">key=&quot;1145141919810&quot;</span><br><span class="line">extensions=&quot;base&quot;</span><br><span class="line">city=&quot;410802&quot;</span><br></pre></td></tr></table></figure>
+<p>其实也没啥东西.<br><code>key</code> 高德的给的APIkey,<br><code>extension</code> 实时天气还是未来天气,<code>base</code>是实时天气(未来天气没写,因为用不到)<br><code>city</code> 就是城市编码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">time=$(<span class="built_in">date</span> +<span class="string">&quot;%Y-%m-%d&quot;</span>)</span><br><span class="line">filename=<span class="string">&quot;<span class="variable">$&#123;time&#125;</span>.txt&quot;</span></span><br><span class="line">path=<span class="string">&quot;/www/result/<span class="variable">$&#123;year&#125;</span>/<span class="variable">$&#123;month&#125;</span>&quot;</span></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$&#123;path&#125;</span></span><br><span class="line">curl <span class="variable">$&#123;url&#125;</span> | jq <span class="string">&#x27;.lives[0]&#x27;</span> &gt;&gt; <span class="string">&quot;<span class="variable">$&#123;path&#125;</span>/<span class="variable">$&#123;filename&#125;</span>&quot;</span></span><br><span class="line"><span class="comment"># &gt;&gt;是追加内容，&gt;是覆盖内容</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;&quot;</span> &gt;&gt; <span class="string">&quot;<span class="variable">$&#123;path&#125;</span>/<span class="variable">$&#123;filename&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>文件以日期做标题来做区分<br><del>然后路径是<code>apache</code>存放文件的位置,就干脆把生成的文件都放到这里了</del><br>后来发现openwrt自带简单的http服务,就<strong>不用再额外安装apache</strong>了<br>把获取到的天气信息放到<code>日期.txt</code>文件里<br>然后<code>echo &quot;&quot;</code>换行</p>
+<p>把写好的脚本放到路由器里面<br>使用<strong>crontab</strong>完成定时任务<br><img src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/e70012332062bdb0661249751ac569d1.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">30 6-22/1 * * * /root/weather/getWeather.sh</span><br></pre></td></tr></table></figure>
+<p>该命令的意思是<br><strong>每天6:30-22:30,每个一小时执行一次<code>getWeather.sh</code>脚本</strong><br>本来是整点发送请求,不过发现获取的数据里的<code>reporttime</code>都是上个小时的半点的数据.<br>所以设置成半点就可以获取整点的数据了(虽然没啥意义<del>强迫症</del>)</p>
+<h2 id="电脑获取信息"><a href="#电脑获取信息" class="headerlink" title="电脑获取信息"></a>电脑获取信息</h2><h3 id="解析数据"><a href="#解析数据" class="headerlink" title="解析数据"></a>解析数据</h3><p>使用Obsidian的<strong>templater插件</strong><br><code>用户自定义脚本</code> 实现的</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">&#x27;http&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> date = <span class="keyword">new</span> <span class="title class_">Date</span>();</span><br><span class="line"><span class="keyword">const</span> year = date.<span class="title function_">getFullYear</span>();</span><br><span class="line"><span class="keyword">const</span> month = (date.<span class="title function_">getMonth</span>()+<span class="number">1</span>).<span class="title function_">toString</span>().<span class="title function_">padStart</span>(<span class="number">2</span>,<span class="string">&#x27;0&#x27;</span>);</span><br><span class="line"><span class="comment">// 服务器IP</span></span><br><span class="line"><span class="keyword">const</span> serverIp = <span class="string">&quot;192.168.1.1&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">getFile</span>(<span class="params">fileName</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> url = <span class="string">`http://<span class="subst">$&#123;serverIp&#125;</span>/result/<span class="subst">$&#123;year&#125;</span>/<span class="subst">$&#123;month&#125;</span>/<span class="subst">$&#123;fileName&#125;</span>`</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">        http.<span class="title function_">get</span>(url, <span class="function">(<span class="params">res</span>) =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> data = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">            res.<span class="title function_">on</span>(<span class="string">&#x27;data&#x27;</span>, <span class="function">(<span class="params">chunk</span>) =&gt;</span> &#123;</span><br><span class="line">                data += chunk;</span><br><span class="line">            &#125;)</span><br><span class="line"></span><br><span class="line">            res.<span class="title function_">on</span>(<span class="string">&#x27;end&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">                <span class="keyword">const</span> jsonMatches = data.<span class="title function_">match</span>(<span class="regexp">/\&#123;[\s\S]*?\&#125;/g</span>);</span><br><span class="line">                <span class="keyword">if</span> (!jsonMatches) &#123;</span><br><span class="line">                    <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&#x27;文件中未找到 JSON 数据&#x27;</span>);</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                <span class="keyword">let</span> temparr = [];</span><br><span class="line">                <span class="keyword">let</span> timearr = [];</span><br><span class="line">                jsonMatches.<span class="title function_">forEach</span>(<span class="function">(<span class="params">jsonString, index</span>) =&gt;</span> &#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        <span class="keyword">const</span> jsonObject = <span class="title class_">JSON</span>.<span class="title function_">parse</span>(jsonString);</span><br><span class="line">                        <span class="comment">//console.log(`第 $&#123;index + 1&#125; 个 JSON 对象：`, jsonObject);</span></span><br><span class="line">                        temparr[index] = jsonObject.<span class="property">temperature</span></span><br><span class="line">                        <span class="comment">//timearr[index] = new Date(jsonObject.reporttime).getHours() + &quot;点&quot;</span></span><br><span class="line">                        timearr[index] = jsonObject.<span class="property">reporttime</span>.<span class="title function_">substring</span>(<span class="number">11</span>,<span class="number">16</span>) <span class="comment">//HH-mm</span></span><br><span class="line">                    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">                        <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">`解析第 <span class="subst">$&#123;index + <span class="number">1</span>&#125;</span> 个 JSON 对象时出错：`</span>, error);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">                <span class="keyword">let</span> result = [temparr,timearr]</span><br><span class="line">                <span class="comment">//console.log(temparr);</span></span><br><span class="line">                <span class="comment">//console.log(timearr);</span></span><br><span class="line">                <span class="comment">//resolve(jsonMatches)</span></span><br><span class="line">                <span class="title function_">resolve</span>(result)</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;).<span class="title function_">on</span>(<span class="string">&#x27;error&#x27;</span>, <span class="function">(<span class="params"><span class="built_in">Error</span></span>) =&gt;</span> &#123;</span><br><span class="line">            <span class="title function_">reject</span>(<span class="title class_">Error</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span>=getFile</span><br></pre></td></tr></table></figure>
+
+<p>写的简单的获取天气数据</p>
+<h3 id="数据展示"><a href="#数据展示" class="headerlink" title="数据展示"></a>数据展示</h3><p>然后在Obsidian的<code>日记模板</code>中<br>插入了下面代码段</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">&lt;%*</span><br><span class="line">let nowTime = tp.date.now(&quot;HH:mm&quot;)</span><br><span class="line">let currenttime = moment(nowTime,&quot;HH:mm&quot;);</span><br><span class="line">if(currenttime.isBefore(moment(&quot;22:30&quot;,&quot;HH:mm&quot;)))&#123;</span><br><span class="line">	console.log(`$&#123;nowTime&#125; 在22:30之前`)%&gt;</span><br><span class="line">```meta-bind-button</span><br><span class="line">label: 今日天气变化</span><br><span class="line">icon: &quot;&quot;</span><br><span class="line">hidden: false</span><br><span class="line">class: &quot;&quot;</span><br><span class="line">tooltip: &quot;点击生成今日天气变化&quot;</span><br><span class="line">id: &quot;&quot;</span><br><span class="line">style: default</span><br><span class="line">actions:</span><br><span class="line">  - type: command</span><br><span class="line">    command: templater-obsidian:insert-templater</span><br><span class="line">```</span><br><span class="line">&lt;%*&#125;else&#123;</span><br><span class="line">	console.log(`$&#123;nowTime&#125; 在22:30之后`)</span><br><span class="line">	let currentTime = tp.date.now(&quot;YYYY-MM-DD&quot;)</span><br><span class="line">	let fileName = `$&#123;currentTime&#125;.txt`</span><br><span class="line">	let result = await tp.user.todayWeather(fileName)</span><br><span class="line">	let timearr = `[$&#123;result[0]&#125;]`</span><br><span class="line">	let temparr = `[$&#123;result[1]&#125;]`</span><br><span class="line">%&gt;</span><br><span class="line">```chart</span><br><span class="line">type: line</span><br><span class="line">labels: &lt;% temparr %&gt;</span><br><span class="line">series:</span><br><span class="line">  - title: 温度</span><br><span class="line">    data: &lt;% timearr %&gt;</span><br><span class="line">tension: 0.5</span><br><span class="line">width: 100%</span><br><span class="line">labelColors: false</span><br><span class="line">fill: false</span><br><span class="line">beginAtZero: true</span><br><span class="line">bestFit: false</span><br><span class="line">bestFitTitle: undefined</span><br><span class="line">bestFitNumber: 0</span><br><span class="line">```</span><br><span class="line">&lt;%*</span><br><span class="line">&#125;</span><br><span class="line">-%&gt;</span><br></pre></td></tr></table></figure>
+
+<p>添加了个插入今日天气变化的按钮<br>还有 <strong>图表插件chart</strong> 的代码段</p>
+<p>创建日记时先获取当前的时间,然后和自己设定的时间进行对比<br>在<code>22:30之后</code>就直接生成今天一天的气温变化<br>如果是<code>22:30之前</code>创建的日记,那么就会加载一个插入今天的天气的按钮(使用<strong>插件meta bind</strong>实现)<br>方便晚上写日记的时候添加.</p>
+<h1 id="最终结果"><a href="#最终结果" class="headerlink" title="最终结果"></a>最终结果</h1><img src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/36cd28aa1da91ad16d15d55071b506cd.png" alt="image-20240509142348928" style="zoom:67%;">
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://giraffele.github.io">GiraffeLe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://giraffele.github.io/post/Templater%E6%97%A5%E8%AE%B0%E6%A8%A1%E6%9D%BF%E5%A4%A9%E6%B0%94%E6%95%B0%E6%8D%AE%E6%BA%90/">https://giraffele.github.io/post/Templater日记模板天气数据源/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://giraffele.github.io" target="_blank">Giraffele'Site</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%84%9A%E6%9C%AC/">脚本</a></div><div class="post_share"><div class="social-share" data-image="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/4b532e7f47e307a678b28406019a24d7.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/post/%E6%B2%B3%E5%8D%97%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6GiWifi%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90%E5%8F%8A%E6%A8%A1%E6%8B%9F%E7%99%BB%E5%BD%95/" title="河南理工大学GiWifi认证过程分析及模拟登录"><img class="cover" src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/1836e3efa74eeed7045079354d6fd908.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">河南理工大学GiWifi认证过程分析及模拟登录</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/post/%E6%B2%B3%E5%8D%97%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6GiWifi%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90%E5%8F%8A%E6%A8%A1%E6%8B%9F%E7%99%BB%E5%BD%95/" title="河南理工大学GiWifi认证过程分析及模拟登录"><img class="cover" src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/1836e3efa74eeed7045079354d6fd908.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-03-05</div><div class="title">河南理工大学GiWifi认证过程分析及模拟登录</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/imagesSnipaste_2023-11-24_15-51-56.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">GiraffeLe</div><div class="author-info__description">入门程序员</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/GiraffeLe" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="https://space.bilibili.com/37426008" target="_blank" title="Bilibili"><i class="fa-brands fa-bilibili" style="color: #ca49b9;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">慢慢调试.</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B5%B7%E5%9B%A0"><span class="toc-number">1.</span> <span class="toc-text">起因</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%87%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">过程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8%E6%94%B6%E9%9B%86%E4%BF%A1%E6%81%AF"><span class="toc-number">2.1.</span> <span class="toc-text">路由器收集信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%B5%E8%84%91%E8%8E%B7%E5%8F%96%E4%BF%A1%E6%81%AF"><span class="toc-number">2.2.</span> <span class="toc-text">电脑获取信息</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90%E6%95%B0%E6%8D%AE"><span class="toc-number">2.2.1.</span> <span class="toc-text">解析数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%B1%95%E7%A4%BA"><span class="toc-number">2.2.2.</span> <span class="toc-text">数据展示</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E7%BB%93%E6%9E%9C"><span class="toc-number">3.</span> <span class="toc-text">最终结果</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/post/Templater%E6%97%A5%E8%AE%B0%E6%A8%A1%E6%9D%BF%E5%A4%A9%E6%B0%94%E6%95%B0%E6%8D%AE%E6%BA%90/" title="Templater日记模板天气数据源"><img src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/4b532e7f47e307a678b28406019a24d7.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Templater日记模板天气数据源"/></a><div class="content"><a class="title" href="/post/Templater%E6%97%A5%E8%AE%B0%E6%A8%A1%E6%9D%BF%E5%A4%A9%E6%B0%94%E6%95%B0%E6%8D%AE%E6%BA%90/" title="Templater日记模板天气数据源">Templater日记模板天气数据源</a><time datetime="2024-05-08T15:27:53.000Z" title="发表于 2024-05-08 23:27:53">2024-05-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/%E6%B2%B3%E5%8D%97%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6GiWifi%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90%E5%8F%8A%E6%A8%A1%E6%8B%9F%E7%99%BB%E5%BD%95/" title="河南理工大学GiWifi认证过程分析及模拟登录"><img src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/1836e3efa74eeed7045079354d6fd908.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="河南理工大学GiWifi认证过程分析及模拟登录"/></a><div class="content"><a class="title" href="/post/%E6%B2%B3%E5%8D%97%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6GiWifi%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90%E5%8F%8A%E6%A8%A1%E6%8B%9F%E7%99%BB%E5%BD%95/" title="河南理工大学GiWifi认证过程分析及模拟登录">河南理工大学GiWifi认证过程分析及模拟登录</a><time datetime="2024-03-05T08:34:30.000Z" title="发表于 2024-03-05 16:34:30">2024-03-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/%E5%88%A9%E7%94%A8Zerotier%E5%AE%9E%E7%8E%B0%E5%BC%82%E5%9C%B0%E7%BB%84%E7%BD%91/" title="利用Zerotier实现异地组网"><img src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/a919c3c9f164eeeca9c1422cbda2a195.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="利用Zerotier实现异地组网"/></a><div class="content"><a class="title" href="/post/%E5%88%A9%E7%94%A8Zerotier%E5%AE%9E%E7%8E%B0%E5%BC%82%E5%9C%B0%E7%BB%84%E7%BD%91/" title="利用Zerotier实现异地组网">利用Zerotier实现异地组网</a><time datetime="2024-01-29T05:43:59.000Z" title="发表于 2024-01-29 13:43:59">2024-01-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/2023FinalAnime/" title="2023AnimeRank"><img src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/4b532e7f47e307a678b28406019a24d7.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="2023AnimeRank"/></a><div class="content"><a class="title" href="/post/2023FinalAnime/" title="2023AnimeRank">2023AnimeRank</a><time datetime="2024-01-03T14:03:40.000Z" title="发表于 2024-01-03 22:03:40">2024-01-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/%E5%B8%B8%E7%94%A8Markdown%E7%9A%84%E8%AF%AD%E6%B3%95/" title="常用Markdown的语法"><img src="https://myhexo-1315225918.cos.ap-nanjing.myqcloud.com/hexo/images/cover/bc58e81ad83c6a1a1b980251e9845c15.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="常用Markdown的语法"/></a><div class="content"><a class="title" href="/post/%E5%B8%B8%E7%94%A8Markdown%E7%9A%84%E8%AF%AD%E6%B3%95/" title="常用Markdown的语法">常用Markdown的语法</a><time datetime="2023-11-25T14:42:45.000Z" title="发表于 2023-11-25 22:42:45">2023-11-25</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2024 By GiraffeLe</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi!Welcome to my blog</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(()=>{
+  const getGiscusTheme = theme => {
+    return theme === 'dark' ? 'dark' : 'light'
+  }
+
+  const loadGiscus = () => {
+    const config = Object.assign({
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'GiraffeLe/giraffele.github.io',
+      'data-repo-id': 'R_kgDOJrKjZg',
+      'data-category-id': 'DIC_kwDOJrKjZs4CbO0_',
+      'data-mapping': 'pathname',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true
+    },null)
+
+    const ele = document.createElement('script')
+    for (let key in config) {
+      ele.setAttribute(key, config[key])
+    }
+    document.getElementById('giscus-wrap').appendChild(ele)
+  }
+
+  const changeGiscusTheme = theme => {
+    const sendMessage = message => {
+      const iframe = document.querySelector('iframe.giscus-frame')
+      if (!iframe) return
+      iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app')
+    }
+
+    sendMessage({
+      setConfig: {
+        theme: getGiscusTheme(theme)
+      }
+    });
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment= loadGiscus
+  }
+})()</script></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
